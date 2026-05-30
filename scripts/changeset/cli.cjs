@@ -37,7 +37,7 @@ function parseArgs(argv) {
     toRef: null,
     changelog: null,
     output: null,
-    repoSlug: 'open-gsd/get-shit-done-redux',
+    repoSlug: 'open-gsd/gsd-core',
     installCommand: `npx ${PACKAGE_NAME}@latest`,
     json: false,
   };

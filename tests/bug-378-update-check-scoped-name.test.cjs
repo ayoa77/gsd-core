@@ -1,11 +1,11 @@
 /**
  * Regression test for #378: gsd-check-update-worker.js must query
- * the SCOPED package name (@opengsd/get-shit-done-redux) when calling
+ * the SCOPED package name (@opengsd/gsd-core) when calling
  * `npm view <name> version`.
  *
  * Background: the worker previously hardcoded the unscoped string
- * 'get-shit-done-redux', which returns E404 from the npm registry because
- * the published package is scoped. This caused `latest` to stay null and
+ * 'gsd-core', which returns E404 from the npm registry because
+ * the published package is scoped (@opengsd/gsd-core). This caused `latest` to stay null and
  * `update_available` to be permanently false — users never saw update
  * notifications.
  *
@@ -13,10 +13,10 @@
  * future renames). This test locks the contract in two ways:
  *
  * 1. Structural: the worker must NOT contain the bare unscoped literal
- *    'get-shit-done-redux' as a standalone npm view argument.
+ *    'gsd-core' as a standalone npm view argument.
  * 2. Derived: the worker must read the package name from package.json
  *    and the package.json name MUST be the scoped string
- *    '@opengsd/get-shit-done-redux'.
+ *    '@opengsd/gsd-core'.
  *
  * Source-grep policy: this test reads hook source via readFileSync.
  * The repo's lint-no-source-grep rule targets bin/lib/get-shit-done — hooks/
@@ -44,16 +44,16 @@ describe('bug #378: update-check worker uses scoped package name', () => {
     assert.ok(fs.existsSync(WORKER_PATH), `worker not found at ${WORKER_PATH}`);
   });
 
-  test('package.json name is the scoped @opengsd/get-shit-done-redux', () => {
+  test('package.json name is the scoped @opengsd/gsd-core', () => {
     const pkg = JSON.parse(fs.readFileSync(PKG_PATH, 'utf8'));
     assert.equal(
       pkg.name,
-      '@opengsd/get-shit-done-redux',
+      '@opengsd/gsd-core',
       'package.json must declare the scoped name — this is what npm view must query',
     );
   });
 
-  test('worker does NOT hardcode the unscoped get-shit-done-redux as an npm view argument', () => {
+  test('worker does NOT hardcode the unscoped gsd-core as an npm view argument', () => {
     const src = fs.readFileSync(WORKER_PATH, 'utf8');
 
     // Strip comments so doc-prose mentions don't trigger the check.
@@ -62,17 +62,17 @@ describe('bug #378: update-check worker uses scoped package name', () => {
       .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 
     // The unscoped bare string as a string literal used in code.
-    // A match here means the bug is present: npm view 'get-shit-done-redux'
+    // A match here means the bug is present: npm view 'gsd-core'
     // → E404 → update_available permanently false.
-    const unscopedLiteral = /['"]get-shit-done-redux['"]/;
+    const unscopedLiteral = /['"]gsd-core['"]/;
 
     assert.doesNotMatch(
       codeOnly,
       unscopedLiteral,
       [
-        "Worker must not pass the unscoped 'get-shit-done-redux' to `npm view`.",
+        "Worker must not pass the unscoped 'gsd-core' to `npm view`.",
         'That name returns E404, leaving update_available permanently false.',
-        'Use the scoped name from package.json: @opengsd/get-shit-done-redux.',
+        'Use the scoped name from package.json: @opengsd/gsd-core.',
       ].join(' '),
     );
   });
