@@ -434,7 +434,7 @@ describe('config-new-project command', () => {
 
     // git section present with all three keys
     assert.ok(config.git && typeof config.git === 'object', 'git section should exist');
-    assert.strictEqual(config.git.branching_strategy, 'none');
+    assert.strictEqual(config.git.branching_strategy, 'phase');
     assert.strictEqual(config.git.phase_branch_template, 'gsd/phase-{phase}-{slug}');
     assert.strictEqual(config.git.milestone_branch_template, 'gsd/{milestone}-{slug}');
 
@@ -478,7 +478,7 @@ describe('config-new-project command', () => {
     assert.strictEqual(config.workflow.verifier, true);
     assert.strictEqual(config.workflow.nyquist_validation, false);
     // Defaults still present for non-chosen keys
-    assert.strictEqual(config.git.branching_strategy, 'none');
+    assert.strictEqual(config.git.branching_strategy, 'phase');
     assert.strictEqual(typeof config.search_gitignored, 'boolean');
   });
 
@@ -492,7 +492,7 @@ describe('config-new-project command', () => {
     assert.strictEqual(config.parallelization, true);
     assert.strictEqual(config.search_gitignored, false);
     assert.ok(config.git && typeof config.git === 'object');
-    assert.strictEqual(config.git.branching_strategy, 'none');
+    assert.strictEqual(config.git.branching_strategy, 'phase');
     assert.ok(config.workflow && typeof config.workflow === 'object');
     assert.strictEqual(config.workflow.nyquist_validation, true);
     assert.strictEqual(config.workflow.auto_advance, false);
